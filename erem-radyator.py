@@ -21,9 +21,7 @@ def login():
     url = "https://www.b2b-eremgroup.com/LOGIN.aspx"
     with open("password.txt", 'r', newline='') as file:
         username = file.readline()
-        print(username)
         password = file.readline()
-        print(password)
     
     driver.get(url)
     time.sleep(1)
@@ -47,8 +45,19 @@ def get_products(category_url):
 
             for product in products:
                 writer = csv.writer(file)
-                writer.writerow([product.find_next("h6",{"class": "product_title"}).string, product.find_next("span",{"class": "price"}).string])
-
+                title = product.find_next("h6",{"class": "product_title"}).string
+                price = product.find_next("span",{"class": "price"}).string
+                stock = ""
+                try:
+                    stock = product.find_next("div",{"class": "on_sale"}).text
+                    print(stock)
+                except Exception as e:
+                    print(e)
+                    
+                if(stock == "" or stock == None):
+                    stock = "Stokta Yok"
+                writer.writerow([title, price, stock])
+# product.find_next("a",{"class": "product_img_link"})["href"], product.find_next("img",{"class": "img-responsive"})["src"]
 baymak_radyator_url = "https://www.b2b-eremgroup.com/PRODUCT.aspx?LIST=1&TRENDING=&NEWARRIVAL=&BESTSELLER=&FEATURED=&SPECIALOFFER=&DEALOFDAY=&TOPRATED=&CAT1=Radyat%C3%B6r%20Grubu&CAT2=&BRAND=&WORD=&FILTER=ER05.02-2066%2cER05.03-2049%2cER05.03-2052%2cER05.05-2083&PAGE="
 
 create_price_list(baymak_radyator_url)
